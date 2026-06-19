@@ -35,7 +35,6 @@
 
     <main class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- PANEL UPLOAD (STATEFUL / MENYIMPAN MEMORI) -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8 bg-gradient-to-br from-white to-slate-50">
             <div class="mb-5 border-b border-slate-200 pb-4">
                 <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wide">Penyimpanan Data Sementara (Hingga 4 Slot)</h3>
@@ -47,16 +46,13 @@
                     {% for i in range(1, 5) %}
                     {% set slot_data = slots.get(i) %}
                     
-                    <!-- Kondisional Desain Kotak Slot (Hijau jika ada data) -->
                     <div class="p-4 rounded-xl border transition-colors shadow-sm {% if slot_data %}bg-emerald-50 border-emerald-300{% else %}bg-slate-50 border-slate-200 hover:border-blue-300{% endif %}">
                         
                         <div class="flex justify-between items-center mb-2">
-                            <!-- Kondisional Warna Label Slot -->
                             <label class="text-[11px] font-extrabold {% if slot_data %}text-emerald-700 bg-emerald-200{% else %}text-[#1e3a8a] bg-blue-100{% endif %} px-2 py-1 rounded inline-block uppercase tracking-widest">
                                 Slot {{ i }}
                             </label>
                             
-                            <!-- Tombol Hapus (Hanya muncul jika slot sudah ada datanya) -->
                             {% if slot_data %}
                             <button type="submit" name="action" value="delete_{{ i }}" class="text-red-600 hover:text-red-800 hover:bg-red-100 font-bold text-[10px] uppercase tracking-wide flex items-center bg-white px-2 py-1 rounded border border-red-200 shadow-sm transition-colors">
                                 ✖ Hapus
@@ -96,7 +92,6 @@
             {% endfor %}
         {% endif %}
 
-        <!-- SCRIPT GLOBAL -->
         <script>
             const globalTableData = {}; 
             Chart.defaults.font.family = "'Inter', sans-serif";
@@ -105,7 +100,6 @@
             };
         </script>
 
-        <!-- KONDISI KOSONG -->
         {% if dashboards|length == 0 %}
         <div class="flex flex-col items-center justify-center py-24 text-center bg-white rounded-xl border border-slate-200 border-dashed">
             <svg class="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -114,12 +108,10 @@
         </div>
         {% endif %}
 
-        <!-- 🌟 ================= MASTER DASHBOARD (GRAND TOTAL) ================= 🌟 -->
         {% if grand_total %}
         <div class="mb-12 mt-4 bg-[#1e3a8a] rounded-2xl shadow-xl overflow-hidden border border-blue-800">
-            <!-- Header Biru -->
             <div class="py-8 px-8 text-center bg-gradient-to-b from-[#1e3a8a] to-[#172554] border-b border-white/10">
-                <h2 class="text-3xl font-black uppercase tracking-widest text-amber-400">Rekapitulasi Kementerian (UKE I)</h2>
+                <h2 class="text-3xl font-black uppercase tracking-widest text-amber-400">Rekapitulasi Monitoring dan Evaluasi Pelaksanaan Anggaran (UKE I)</h2>
                 <p class="text-sm font-medium text-blue-200 mt-2">Penjumlahan Agregat dari {{ dashboards|length }} Unit Kerja Eselon I</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
@@ -129,20 +121,28 @@
                     </div>
                     <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6 flex flex-col justify-center items-center">
                         <h3 class="text-[11px] font-bold text-blue-200 uppercase tracking-widest mb-2">Grand Total Realisasi</h3>
-                        <p class="text-2xl font-extrabold text-amber-400">Rp {{ "{:,.0f}".format(grand_total.realisasi) }}</p>
+                        
+                        <p class="text-2xl font-extrabold text-amber-400">
+                            Rp {{ "{:,.0f}".format(grand_total.realisasi).replace(',', '.') }}
+                        </p>
+                        
+                        <div class="mt-1 bg-green-500/20 px-3 py-1 rounded-full border border-green-500/30">
+                            <p class="text-sm font-bold text-green-400">
+                                {{ grand_total.realisasi_pct }}%
+                            </p>
+                        </div>
                     </div>
                     <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6 flex flex-col justify-center items-center">
                         <h3 class="text-[11px] font-bold text-blue-200 uppercase tracking-widest mb-2">Total Sisa Pagu</h3>
                         <p class="text-2xl font-extrabold text-white">Rp {{ "{:,.0f}".format(grand_total.sisa_pagu) }}</p>
                     </div>
                     <div class="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6 flex flex-col justify-center items-center">
-                        <h3 class="text-[11px] font-bold text-blue-200 uppercase tracking-widest mb-2">Rata-rata Capaian Fisik</h3>
-                        <p class="text-2xl font-extrabold text-emerald-400">{{ grand_total.fisik }}%</p>
+                        <h3 class="text-[11px] font-bold text-blue-200 uppercase tracking-widest mb-2">Deviasi Global</h3>
+                        <p class="text-2xl font-extrabold text-emerald-400">{{ grand_total.deviasi }}%</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Master Charts -->
             <div class="bg-slate-100 p-8">
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
                     <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -161,7 +161,6 @@
                     </div>
                 </div>
 
-                <!-- Master Table -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -214,10 +213,10 @@
                     data: {
                         labels: gChartData.labels,
                         datasets: [
-                            { label: 'Pagu', data: gChartData.pagu, backgroundColor: '#1e3a8a', stack: 'Stack 0', borderRadius: 4, barPercentage: 0.6 },
-                            { label: 'Rencana', data: gChartData.rencana_rp, backgroundColor: '#94a3b8', stack: 'Stack 1', borderRadius: 4, barPercentage: 0.6 },
-                            { label: 'Realisasi', data: gChartData.realisasi_rp, backgroundColor: '#059669', stack: 'Stack 2', borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 }, barPercentage: 0.6 },
-                            { label: 'Deviasi', data: gChartData.deviasi_rp, backgroundColor: '#e11d48', stack: 'Stack 2', borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 }, barPercentage: 0.6 }
+                            { label: 'Pagu', data: gChartData.pagu, backgroundColor: '#1e3a8a', stack: 'Stack 0', borderRadius: 4, barPercentage: 1, categoryPercentage: 1 },
+                            { label: 'Rencana', data: gChartData.rencana_rp, backgroundColor: '#94a3b8', stack: 'Stack 1', borderRadius: 4, barPercentage: 1, categoryPercentage: 1 },
+                            { label: 'Realisasi', data: gChartData.realisasi_rp, backgroundColor: '#059669', stack: 'Stack 2', borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 }, barPercentage: 0.9, categoryPercentage: 0.9 },
+                            { label: 'Deviasi', data: gChartData.deviasi_rp, backgroundColor: '#e11d48', stack: 'Stack 2', borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 }, barPercentage: 0.9, categoryPercentage: 0.9 }
                         ]
                     },
                     options: {
@@ -270,7 +269,6 @@
         {% endif %}
 
 
-        <!-- 🌟 ================= DASHBOARD PER SLOT / UKE II ================= 🌟 -->
         {% for dash in dashboards %}
         <div class="mb-16 pb-12 border-b-[6px] border-slate-300 border-dashed last:border-b-0">
             
@@ -279,7 +277,6 @@
                 <h2 class="text-2xl font-black text-slate-800 uppercase tracking-wide">{{ dash.title }}</h2>
             </div>
 
-            <!-- Summary Metrics -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center items-center">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Total Pagu Anggaran</h3>
@@ -287,19 +284,26 @@
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center items-center">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Total Realisasi</h3>
-                    <p class="text-2xl font-extrabold text-amber-600">Rp {{ "{:,.0f}".format(dash.total.realisasi) }}</p>
+                        <p class="text-2xl font-extrabold text-amber-600">
+                            Rp {{ "{:,.0f}".format(dash.total.realisasi).replace(',', '.') }}
+                        </p>
+                        
+                        <div class="mt-2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                            <p class="text-sm font-bold text-emerald-600">
+                                {{ dash.total.realisasi_pct }}%
+                            </p>
+                        </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center items-center">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Total Sisa Pagu</h3>
                     <p class="text-2xl font-extrabold text-slate-600">Rp {{ "{:,.0f}".format(dash.total.sisa_pagu) }}</p>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center items-center">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Capaian Fisik</h3>
-                    <p class="text-2xl font-extrabold text-emerald-600">{{ dash.total.fisik }}%</p>
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Deviasi (%)</h3>
+                    <p class="text-2xl font-extrabold text-emerald-600">{{ dash.total.deviasi }}%</p>
                 </div>
             </div>
 
-            <!-- Charts -->
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
                 <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-4">
@@ -317,7 +321,6 @@
                 </div>
             </div>
 
-            <!-- Data Table -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="px-6 py-5 bg-slate-50 border-b border-slate-200">
                     <h3 class="text-base font-extrabold text-slate-800 tracking-wide">Rincian Komprehensif per Unit Kerja</h3>
@@ -383,10 +386,10 @@
                         data: {
                             labels: chartData.labels,
                             datasets: [
-                                { label: 'Pagu Anggaran', data: chartData.pagu, backgroundColor: '#1e3a8a', stack: 'Stack 0', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.8 },
-                                { label: 'Rencana', data: chartData.rencana_rp, backgroundColor: '#94a3b8', stack: 'Stack 1', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.8 },
-                                { label: 'Realisasi', data: chartData.realisasi_rp, backgroundColor: '#059669', stack: 'Stack 2', borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 }, barPercentage: 0.6, categoryPercentage: 0.8 },
-                                { label: 'Deviasi', data: chartData.deviasi_rp, backgroundColor: '#e11d48', stack: 'Stack 2', borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 }, barPercentage: 0.6, categoryPercentage: 0.8 }
+                                { label: 'Pagu Anggaran', data: chartData.pagu, backgroundColor: '#1e3a8a', stack: 'Stack 0', borderRadius: 4, barPercentage: 1, categoryPercentage: 1},
+                                { label: 'Rencana', data: chartData.rencana_rp, backgroundColor: '#94a3b8', stack: 'Stack 1', borderRadius: 4, barPercentage: 1, categoryPercentage: 1 },
+                                { label: 'Realisasi', data: chartData.realisasi_rp, backgroundColor: '#059669', stack: 'Stack 2', borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 }, barPercentage: 0.9, categoryPercentage: 0.9 },
+                                { label: 'Deviasi', data: chartData.deviasi_rp, backgroundColor: '#e11d48', stack: 'Stack 2', borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 }, barPercentage: 0.9, categoryPercentage: 0.9 }
                             ]
                         },
                         options: {
@@ -442,7 +445,6 @@
         </div>
         {% endfor %}
 
-        <!-- POPUP CATATAN -->
         <div id="catatanModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="fixed inset-0 bg-slate-900 bg-opacity-50 transition-opacity backdrop-blur-sm"></div>
             <div class="fixed inset-0 z-10 overflow-y-auto">
